@@ -9,6 +9,12 @@ npm install @capacitor/dialog
 npx cap sync
 ```
 
+### Variables
+
+This plugin will use the following project variables (defined in your app's `variables.gradle` file):
+
+- `androidxMaterialVersion`: version of `com.google.android.material:material` (default: `1.12.0`)
+
 ## Example
 
 ```typescript

@@ -1,10 +1,14 @@
 package com.capacitorjs.plugins.dialog;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.EditText;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class Dialog {
 
@@ -21,7 +25,7 @@ public class Dialog {
      * title and ok button
      * @param message the message to show
      */
-    public static void alert(final Context context, final String message, final Dialog.OnResultListener listener) {
+    public static void alert(final Context context, final String message, final OnResultListener listener) {
         alert(context, message, null, null, listener);
     }
 
@@ -38,14 +42,14 @@ public class Dialog {
         final String message,
         final String title,
         final String okButtonTitle,
-        final Dialog.OnResultListener listener
+        final OnResultListener listener
     ) {
         final String alertOkButtonTitle = okButtonTitle == null ? "OK" : okButtonTitle;
 
         new Handler(Looper.getMainLooper())
             .post(
                 () -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    AlertDialog.Builder builder = getDialogBuilder(context);
 
                     if (title != null) {
                         builder.setTitle(title);
@@ -73,7 +77,7 @@ public class Dialog {
             );
     }
 
-    public static void confirm(final Context context, final String message, final Dialog.OnResultListener listener) {
+    public static void confirm(final Context context, final String message, final OnResultListener listener) {
         confirm(context, message, null, null, null, listener);
     }
 
@@ -83,7 +87,7 @@ public class Dialog {
         final String title,
         final String okButtonTitle,
         final String cancelButtonTitle,
-        final Dialog.OnResultListener listener
+        final OnResultListener listener
     ) {
         final String confirmOkButtonTitle = okButtonTitle == null ? "OK" : okButtonTitle;
         final String confirmCancelButtonTitle = cancelButtonTitle == null ? "Cancel" : cancelButtonTitle;
@@ -91,7 +95,7 @@ public class Dialog {
         new Handler(Looper.getMainLooper())
             .post(
                 () -> {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    AlertDialog.Builder builder = getDialogBuilder(context);
                     if (title != null) {
                         builder.setTitle(title);
                     }
@@ -125,7 +129,7 @@ public class Dialog {
             );
     }
 
-    public static void prompt(final Context context, final String message, final Dialog.OnResultListener listener) {
+    public static void prompt(final Context context, final String message, final OnResultListener listener) {
         prompt(context, message, null, null, null, null, null, listener);
     }
 
@@ -137,7 +141,7 @@ public class Dialog {
         final String cancelButtonTitle,
         final String inputPlaceholder,
         final String inputText,
-        final Dialog.OnResultListener listener
+        final OnResultListener listener
     ) {
         final String promptOkButtonTitle = okButtonTitle == null ? "OK" : okButtonTitle;
         final String promptCancelButtonTitle = cancelButtonTitle == null ? "Cancel" : cancelButtonTitle;
@@ -147,7 +151,7 @@ public class Dialog {
         new Handler(Looper.getMainLooper())
             .post(
                 () -> {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    AlertDialog.Builder builder = getDialogBuilder(context);
                     final EditText input = new EditText(context);
 
                     input.setHint(promptInputPlaceholder);
@@ -182,9 +186,17 @@ public class Dialog {
                         );
 
                     AlertDialog dialog = builder.create();
-
                     dialog.show();
                 }
             );
+    }
+
+    private static AlertDialog.Builder getDialogBuilder(final Context context) {
+        try {
+            return new MaterialAlertDialogBuilder(context);
+        } catch (Exception e) {
+            Log.w("capacitor-dialog", "Unable to create Material Dialog; using default AppCompat dialog", e);
+            return new AlertDialog.Builder(context);
+        }
     }
 }
